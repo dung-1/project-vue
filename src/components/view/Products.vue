@@ -90,9 +90,9 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { productService } from '../services/product.service'
-import type { Product, Category } from '../types'
-import { useCategoryStore } from '../stores/categoryStore'
+import { productService } from '../../services/product.service'
+import type { Product, Category } from '../../types'
+import { useCategoryStore } from '../../stores/categoryStore'
 
 const products = ref<Product[]>([])
 const loading = ref(false)

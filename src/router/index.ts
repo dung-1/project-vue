@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
 
+
 const routes: RouteRecordRaw[] = [
   { path: '/', redirect: '/dashboard' },
   {
@@ -10,17 +11,17 @@ const routes: RouteRecordRaw[] = [
       { 
         path: 'dashboard', 
         name: 'Dashboard', 
-        component: () => import('../view/Dashboard.vue')
+        component: () => import('../components/view/Dashboard.vue')
       },
       { 
         path: 'categories', 
         name: 'Categories', 
-        component: () => import('../view/Categories.vue')
+        component: () => import('../components/view/Categories.vue')
       },
       { 
         path: 'products', 
         name: 'Products', 
-        component: () => import('../view/Products.vue')
+        component: () => import('../components/view/Products.vue')
       },
     ]
   },

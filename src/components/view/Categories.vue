@@ -71,8 +71,8 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { useCategoryStore } from '../stores/categoryStore'
-import type { Category } from '../types'
+import { useCategoryStore } from '../../stores/categoryStore'
+import type { Category } from '../../types'
 import { debounce } from 'lodash'
 
 const route = useRoute()
