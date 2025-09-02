@@ -8,10 +8,11 @@ export interface Category {
 
 export interface Product {
   id: number
-  name: string
-  description?: string
+  productName: string
+  stockQuantity?: string
   price: number
-  categoryId: number
+  category_Id: number
+  isActive: boolean
   createdAt: string
   updatedAt: string
 }

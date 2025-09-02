@@ -2,10 +2,10 @@
     <aside class="sidebar">
         <nav>
             <ul>
-                <li><router-link to="/dashboard">Trang chủ</router-link></li>
-                <li><router-link to="/categories">Quản lý loại sản phẩm</router-link></li>
-                <li><router-link to="/products">Quản lý sản phẩm</router-link></li>
-                <li><a href="#">Đăng xuất</a></li>
+                <li><router-link to="/dashboard"><i class="fa-solid fa-house"></i> Trang chủ</router-link></li>
+                <li><router-link to="/categories"><i class="fa-solid fa-chart-simple"></i> Quản lý loại</router-link></li>
+                <li><router-link to="/products"><i class="fa-solid fa-laptop"></i> Quản lý sản phẩm</router-link></li>
+                <li><a href="#"><i class="fa-solid fa-right-from-bracket"></i> Đăng xuất</a></li>
             </ul>
         </nav>
     </aside>
