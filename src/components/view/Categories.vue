@@ -74,6 +74,7 @@ import { useRoute } from 'vue-router'
 import { useCategoryStore } from '../../stores/categoryStore'
 import type { Category } from '../../types'
 import { debounce } from 'lodash'
+import { notifySuccess, notifyError, confirmAction } from '../../untils/notifications'
 
 const route = useRoute()
 const store = useCategoryStore()
@@ -111,8 +112,9 @@ const onCreate = async () => {
         await fetchCategories()
         showModal.value = false
         newCategory.value = { categoryName: '', description: '' }
+        notifySuccess('Created successfully')
     } catch (error) {
-        alert('Failed to create category!')
+        notifyError('Failed to create category!')
     }
 }
 
@@ -130,8 +132,9 @@ const onUpdate = async (id: number) => {
         await updateCategory(id, editCategory.value)
         await fetchCategories()
         editId.value = null
+        notifySuccess('Updated successfully')
     } catch (error) {
-        alert('Failed to update category!')
+        notifyError('Failed to update category!')
     }
 }
 
@@ -140,13 +143,14 @@ const cancelEdit = () => {
 }
 
 const onDelete = async (id: number) => {
-    if (confirm('Are you sure you want to delete this category?')) {
-        try {
-            await removeCategory(id)
-            await fetchCategories()
-        } catch (error) {
-            alert('Failed to delete category!')
-        }
+    const ok = await confirmAction('Delete this category?', 'This action cannot be undone')
+    if (!ok) return
+    try {
+        await removeCategory(id)
+        await fetchCategories()
+        notifySuccess('Deleted successfully')
+    } catch (error) {
+        notifyError('Failed to delete category!')
     }
 }
 

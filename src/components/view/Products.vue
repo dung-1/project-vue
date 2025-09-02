@@ -8,7 +8,7 @@
         </div>
 
         <!-- Modal Add Product -->
-        <div v-if="showModal" class="modal-overlay">
+        <div v-if="showModal" class="modal-overlay" >
             <div class="modal">
                 <h2>Add New Product</h2>
                 <form @submit.prevent="onCreate">
@@ -17,8 +17,9 @@
                         <input v-model="newProduct.productName" placeholder="Enter product name" required />
                     </div>
                     <div class="form-group">
-                        <label>Description:</label>
-                        <textarea v-model="newProduct.stockQuantity" placeholder="Enter description" rows="3"></textarea>
+                        <label>stockQuantity:</label>
+                        <el-input-number v-model="newProduct.stockQuantity" placeholder="Enter stockQuantity"
+                            rows="3" style="width: -webkit-fill-available;"></el-input-number>
                     </div>
                     <div class="form-group">
                         <label>Price:</label>
@@ -28,7 +29,15 @@
                         <label>Category:</label>
                         <select v-model="newProduct.category_Id" required>
                             <option value="" disabled>Select category</option>
-                            <option v-for="cat in categories" :key="cat.id" :value="cat.id">{{ cat.categoryName }}</option>
+                            <option v-for="cat in categories" :key="cat.id" :value="cat.id">{{ cat.categoryName }}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Status:</label>
+                        <select v-model="newProduct.isActive" required>
+                            <option :value="true">Active</option>
+                            <option :value="false">Inactive</option>
                         </select>
                     </div>
                     <div class="modal-buttons">
@@ -47,6 +56,7 @@
                     <th>Description</th>
                     <th>Price</th>
                     <th>Category</th>
+                    <th>Active</th>
                     <th style="width: 250px;">Actions</th>
                 </tr>
             </thead>
@@ -71,14 +81,28 @@
                     <td v-else>
                         <select v-model="editProduct.category_Id" required>
                             <option value="" disabled>Select category</option>
-                            <option v-for="cat in categories" :key="cat.id" :value="cat.id">{{ cat.categoryName }}</option>
+                            <option v-for="cat in categories" :key="cat.id" :value="cat.id">{{ cat.categoryName }}
+                            </option>
+                        </select>
+                    </td>
+                    <td v-if="editId !== prod.id">
+                        {{ prod.isActive ? 'Active' : 'Inactive' }}
+                    </td>
+                    <td v-else>
+                        <select v-model="editProduct.isActive" required>
+                            <option :value="true">Active</option>
+                            <option :value="false">Inactive</option>
                         </select>
                     </td>
                     <td style="display: flex;">
-                        <button v-if="editId !== prod.id" @click="onEdit(prod)" class="bg-warning text-light"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
-                        <button v-if="editId === prod.id" @click="onUpdate(prod.id)" class="bg-success text-light"><i class="fa-solid fa-check"></i> Save</button>
-                        <button v-if="editId === prod.id" @click="cancelEdit" class="text-light bg-secondary"><i class="fa-solid fa-circle-notch"></i> Cancel</button>
-                        <button @click="onDelete(prod.id)" :disabled="loading" class="bg-danger text-light"><i class="fa-solid fa-xmark"></i> Delete</button>
+                        <button v-if="editId !== prod.id" @click="onEdit(prod)" class="bg-warning text-light"><i
+                                class="fa-solid fa-pen-to-square"></i> Edit</button>
+                        <button v-if="editId === prod.id" @click="onUpdate(prod.id)" class="bg-success text-light"><i
+                                class="fa-solid fa-check"></i> Save</button>
+                        <button v-if="editId === prod.id" @click="cancelEdit" class="text-light bg-secondary"><i
+                                class="fa-solid fa-circle-notch"></i> Cancel</button>
+                        <button @click="onDelete(prod.id)" :disabled="loading" class="bg-danger text-light"><i
+                                class="fa-solid fa-xmark"></i> Delete</button>
                     </td>
                 </tr>
             </tbody>
@@ -91,8 +115,10 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { productService } from '../../services/product.service'
-import type { Product, Category } from '../../types'
+import type { Product } from '../../types'
 import { useCategoryStore } from '../../stores/categoryStore'
+import { ElInputNumber } from 'element-plus'
+import { notifySuccess, notifyError, confirmAction } from '../../untils/notifications'
 
 const products = ref<Product[]>([])
 const loading = ref(false)
@@ -101,17 +127,18 @@ const newProduct = ref<Partial<Product>>({
     productName: '',
     stockQuantity: '',
     price: 0,
-    category_Id: undefined
+    category_Id: undefined,
+    isActive: true
 })
 const editId = ref<number | null>(null)
 const editProduct = ref<Partial<Product>>({
     productName: '',
     stockQuantity: '',
     price: 0,
-    category_Id: undefined
+    category_Id: undefined,
+    isActive: true
 })
 
-// Get categories from categoryStore
 const categoryStore = useCategoryStore()
 const categories = categoryStore.categories
 
@@ -136,9 +163,10 @@ const onCreate = async () => {
         await productService.create(newProduct.value)
         await fetchProducts()
         showModal.value = false
-        newProduct.value = { productName: '', stockQuantity: '', price: 0, category_Id: undefined }
-    } catch {
-        alert('Failed to create product!')
+        newProduct.value = { productName: '', stockQuantity: '', price: 0, category_Id: undefined, isActive: true }
+        notifySuccess('Created successfully')
+    } catch (error) {
+        notifyError('Failed to create product!')
     } finally {
         loading.value = false
     }
@@ -150,7 +178,8 @@ const onEdit = (prod: Product) => {
         productName: prod.productName,
         stockQuantity: prod.stockQuantity,
         price: prod.price,
-        category_Id: prod.category_Id
+        category_Id: prod.category_Id,
+        isActive: prod.isActive
     }
 }
 
@@ -161,8 +190,9 @@ const onUpdate = async (id: number) => {
         await productService.update(id, editProduct.value)
         await fetchProducts()
         editId.value = null
-    } catch {
-        alert('Failed to update product!')
+        notifySuccess('Updated successfully')
+    } catch (error) {
+        notifyError('Failed to update product!')
     } finally {
         loading.value = false
     }
@@ -173,22 +203,23 @@ const cancelEdit = () => {
 }
 
 const onDelete = async (id: number) => {
-    if (confirm('Are you sure you want to delete this product?')) {
-        loading.value = true
-        try {
-            await productService.remove(id)
-            await fetchProducts()
-        } catch {
-            alert('Failed to delete product!')
-        } finally {
-            loading.value = false
-        }
+    const ok = await confirmAction('Delete this product?', 'This action cannot be undone')
+    if (!ok) return
+    loading.value = true
+    try {
+        await productService.remove(id)
+        await fetchProducts()
+        notifySuccess('Deleted successfully')
+    } catch (error) {
+        notifyError('Failed to delete product!')
+    } finally {
+        loading.value = false
     }
 }
 
 const closeModal = () => {
     showModal.value = false
-    newProduct.value = { productName: '', stockQuantity: '', price: 0, category_Id: undefined }
+    newProduct.value = { productName: '', stockQuantity: '', price: 0, category_Id: undefined, isActive: true }
 }
 
 const categoryName = (id: number) => {
@@ -251,7 +282,7 @@ h1 {
     padding: 24px;
     border-radius: 8px;
     width: 400px;
-    max-width: 90%;
+    max-width: 50%;
 }
 
 .form-group {
@@ -262,6 +293,7 @@ h1 {
     display: block;
     margin-bottom: 8px;
     font-weight: bold;
+    text-align: justify;
 }
 
 .form-group input,
