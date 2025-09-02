@@ -2,7 +2,7 @@
     <div class="categories-page">
         <div class="header">
             <h1>Category Management</h1>
-            <button class="add-button" @click="showModal = true">Add New Category</button>
+            <button class="add-button" @click="showModal = true"> <i class="fa-solid fa-plus"></i>Add Category</button>
         </div>
 
         <!-- Modal Add Category -->
@@ -40,7 +40,7 @@
                     <th>STT</th>
                     <th>Name</th>
                     <th>Description</th>
-                    <th style="width: 180px;">Actions</th>
+                    <th style="width: 250px;">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -54,11 +54,11 @@
                     <td v-else>
                         <input v-model="editCategory.description" required />
                     </td>
-                    <td>
-                        <button v-if="editId !== cat.id" @click="onEdit(cat)">Edit</button>
-                        <button v-if="editId === cat.id" @click="onUpdate(cat.id)">Save</button>
-                        <button v-if="editId === cat.id" @click="cancelEdit">Cancel</button>
-                        <button @click="onDelete(cat.id)" :disabled="loading">Delete</button>
+                    <td style="display: flex;">
+                        <button v-if="editId !== cat.id" @click="onEdit(cat)" class="bg-warning text-light"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
+                        <button v-if="editId === cat.id" @click="onUpdate(cat.id)" class="bg-success text-light"><i class="fa-solid fa-check"></i> Save</button>
+                        <button v-if="editId === cat.id" @click="cancelEdit" class="text-light bg-secondary"><i class="fa-solid fa-circle-notch"></i> Cancel</button>
+                        <button @click="onDelete(cat.id)" :disabled="loading" class="bg-danger text-light"><i class="fa-solid fa-xmark"></i> Delete</button>
                     </td>
                 </tr>
             </tbody>
@@ -159,16 +159,17 @@ const closeModal = () => {
 <style scoped>
 .categories-page {
     width: 100%;
-    padding: 24px;
     background: #fff;
     border-radius: 8px;
     box-shadow: 0 2px 8px #0001;
+    max-height: 350px;
 }
 
 h1 {
     margin: 0;
     display: flex;
     padding-bottom: 20px;
+    font-size: 24px;
 }
 
 .header {
