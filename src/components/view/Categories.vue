@@ -12,19 +12,11 @@
                 <form @submit.prevent="onCreate">
                     <div class="form-group">
                         <label>Category Name:</label>
-                        <input 
-                            v-model="newCategory.categoryName" 
-                            placeholder="Enter category name" 
-                            required 
-                        />
+                        <input v-model="newCategory.categoryName" placeholder="Enter category name" required />
                     </div>
                     <div class="form-group">
                         <label>Description:</label>
-                        <textarea 
-                            v-model="newCategory.description" 
-                            placeholder="Enter description"
-                            rows="3"
-                        ></textarea>
+                        <textarea v-model="newCategory.description" placeholder="Enter description" rows="3"></textarea>
                     </div>
                     <div class="modal-buttons">
                         <button type="submit" :disabled="loading">Save</button>
@@ -37,15 +29,15 @@
         <table class="category-table">
             <thead>
                 <tr>
-                    <th>STT</th>
+                    <th>Order</th>
                     <th>Name</th>
                     <th>Description</th>
-                    <th style="width: 250px;">Actions</th>
+                    <th style="display: flex;justify-content: center;">Actions</th>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="cat in categories" :key="cat.id">
-                    <td>{{ categories.indexOf(cat) + 1 }}</td>
+                <tr v-for="(cat, index) in [...categories].sort((a, b) => (a.id < b.id ? 1 : -1))" :key="cat.id">
+                    <td>{{ index + 1 }}</td>
                     <td v-if="editId !== cat.id">{{ cat.categoryName }}</td>
                     <td v-else>
                         <input v-model="editCategory.categoryName" required />
@@ -54,11 +46,15 @@
                     <td v-else>
                         <input v-model="editCategory.description" required />
                     </td>
-                    <td style="display: flex;">
-                        <button v-if="editId !== cat.id" @click="onEdit(cat)" class="bg-warning text-light"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
-                        <button v-if="editId === cat.id" @click="onUpdate(cat.id)" class="bg-success text-light"><i class="fa-solid fa-check"></i> Save</button>
-                        <button v-if="editId === cat.id" @click="cancelEdit" class="text-light bg-secondary"><i class="fa-solid fa-circle-notch"></i> Cancel</button>
-                        <button @click="onDelete(cat.id)" :disabled="loading" class="bg-danger text-light"><i class="fa-solid fa-xmark"></i> Delete</button>
+                    <td style="display: flex;justify-content: center;">
+                        <button v-if="editId !== cat.id" @click="onEdit(cat)" class="bg-warning text-light"><i
+                                class="fa-solid fa-pen-to-square"></i> Edit</button>
+                        <button v-if="editId === cat.id" @click="onUpdate(cat.id)" class="bg-success text-light"><i
+                                class="fa-solid fa-check"></i> Save</button>
+                        <button v-if="editId === cat.id" @click="cancelEdit" class="text-light bg-secondary"><i
+                                class="fa-solid fa-circle-notch"></i> Cancel</button>
+                        <button @click="onDelete(cat.id)" :disabled="loading" class="bg-danger text-light"><i
+                                class="fa-solid fa-xmark"></i> Delete</button>
                     </td>
                 </tr>
             </tbody>
@@ -75,15 +71,26 @@ import { useCategoryStore } from '../../stores/categoryStore'
 import type { Category } from '../../types'
 import { debounce } from 'lodash'
 import { notifySuccess, notifyError, confirmAction } from '../../untils/notifications'
+import { storeToRefs } from 'pinia'
 
 const route = useRoute()
 const store = useCategoryStore()
-const { categories, loading, fetchCategories, createCategory, updateCategory, removeCategory } = store
+
+
+const { categories, loading } = storeToRefs(store)
+const { fetchCategories, createCategory, updateCategory, removeCategory } = store
+
+
+
+
+
+
+
 
 const showModal = ref(false)
-const newCategory = ref<Partial<Category>>({ 
-    categoryName: '', 
-    description: '' 
+const newCategory = ref<Partial<Category>>({
+    categoryName: '',
+    description: ''
 })
 const editId = ref<number | null>(null)
 const editCategory = ref<Partial<Category>>({ categoryName: '', description: '' })
@@ -94,16 +101,18 @@ const debouncedFetch = debounce(() => {
 }, 300)
 
 watch(
-  () => route.path,
-  () => {
-    debouncedFetch()
-  }
+    () => route.path,
+    () => {
+        debouncedFetch()
+    }
 )
 
 // Khởi tạo dữ liệu
 onMounted(async () => {
     await fetchCategories()
 })
+
+
 
 const onCreate = async () => {
     if (!newCategory.value.categoryName?.trim()) return
@@ -118,7 +127,7 @@ const onCreate = async () => {
     }
 }
 
-const onEdit = (cat: Category) => {  
+const onEdit = (cat: Category) => {
     editId.value = cat.id
     editCategory.value = {
         categoryName: cat.categoryName,
@@ -222,9 +231,10 @@ h1 {
 }
 
 .form-group label {
-    display: block;
+    display: flex   ;
     margin-bottom: 8px;
     font-weight: bold;
+    justify-content: flex-start;
 }
 
 .form-group input,

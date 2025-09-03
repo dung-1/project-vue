@@ -8,7 +8,7 @@
         </div>
 
         <!-- Modal Add Product -->
-        <div v-if="showModal" class="modal-overlay" >
+        <div v-if="showModal" class="modal-overlay">
             <div class="modal">
                 <h2>Add New Product</h2>
                 <form @submit.prevent="onCreate">
@@ -18,8 +18,8 @@
                     </div>
                     <div class="form-group">
                         <label>stockQuantity:</label>
-                        <el-input-number v-model="newProduct.stockQuantity" placeholder="Enter stockQuantity"
-                            rows="3" style="width: -webkit-fill-available;"></el-input-number>
+                        <el-input-number v-model="newProduct.stockQuantity" placeholder="Enter stockQuantity" rows="3"
+                            style="width: -webkit-fill-available;"></el-input-number>
                     </div>
                     <div class="form-group">
                         <label>Price:</label>
@@ -51,18 +51,18 @@
         <table class="product-table">
             <thead>
                 <tr>
-                    <th>STT</th>
+                    <th>Order</th>
                     <th>Name</th>
-                    <th>Description</th>
+                    <th>stockQuantity</th>
                     <th>Price</th>
                     <th>Category</th>
                     <th>Active</th>
-                    <th style="width: 250px;">Actions</th>
+                    <th style="display: flex;justify-content: center;">Actions</th>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="prod in products" :key="prod.id">
-                    <td>{{ products.indexOf(prod) + 1 }}</td>
+                <tr v-for="(prod, index) in [...products].sort((a, b) => (a.id < b.id ? 1 : -1))" :key =" prod.id">
+                    <td>{{ index + 1 }}</td>
                     <td v-if="editId !== prod.id">{{ prod.productName }}</td>
                     <td v-else>
                         <input v-model="editProduct.productName" required />
@@ -94,7 +94,7 @@
                             <option :value="false">Inactive</option>
                         </select>
                     </td>
-                    <td style="display: flex;">
+                    <td style="display: flex;justify-content: center;">
                         <button v-if="editId !== prod.id" @click="onEdit(prod)" class="bg-warning text-light"><i
                                 class="fa-solid fa-pen-to-square"></i> Edit</button>
                         <button v-if="editId === prod.id" @click="onUpdate(prod.id)" class="bg-success text-light"><i
